@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+  <meta http-equiv="X-Frame-Options" content="DENY" />
+  <meta name="referrer" content="no-referrer" />
+  <title>Verificación de cuenta · Kx</title>
+  <!-- Reutiliza exactamente los mismos assets de reset-password -->
+  <link rel="icon" type="image/png" href="../reset-password/favicon.png" />
+  <link rel="apple-touch-icon" href="../reset-password/favicon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../reset-password/style.css" />
+</head>
+<body>
+
+  <!-- Fondo animado (idéntico al de reset-password) -->
+  <div class="bg-canvas" aria-hidden="true">
+    <canvas id="particleCanvas"></canvas>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="grid-lines"></div>
+  </div>
+
+  <main class="main-wrapper">
+    <div class="card" id="card" role="main">
+
+      <!-- Logo — mismo que reset-password -->
+      <div class="logo-area" aria-label="Kx Software">
+        <img src="../reset-password/favicon.png" alt="Kx" class="logo-mark" />
+        <div class="logo-text-group">
+          <span class="logo-text">Kx <span class="logo-software">Software</span></span>
+          <span class="logo-tagline">Verificación de cuenta</span>
+        </div>
+      </div>
+
+      <!-- Estado: éxito (?verified=1) -->
+      <section class="state hidden" id="state-success" aria-live="polite">
+        <div class="icon-wrap icon-success">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+            <path class="check-path" d="M5 13l4 4L19 7"/>
+            <circle class="check-circle" cx="12" cy="12" r="10"/>
+          </svg>
+        </div>
+        <h1 class="state-title">¡Email verificado!</h1>
+        <p class="state-subtitle">
+          Tu cuenta en <strong style="color:var(--text-1);font-weight:500">Kx Software</strong>
+          está confirmada y lista.<br/>
+          Abrí la app e iniciá sesión con tu email y contraseña.
+        </p>
+      </section>
+
+      <!-- Estado: error (?verify_error=1) -->
+      <section class="state hidden" id="state-invalid" aria-live="polite">
+        <div class="icon-wrap icon-error">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="15" y1="9" x2="9" y2="15"/>
+            <line x1="9" y1="9" x2="15" y2="15"/>
+          </svg>
+        </div>
+        <h1 class="state-title">Enlace inválido</h1>
+        <p class="state-subtitle" id="invalid-message">
+          Este enlace ya fue utilizado o expiró.<br/>
+          Los enlaces son de un solo uso y tienen validez de <strong style="color:var(--text-1);font-weight:500">24 horas</strong>.<br/><br/>
+          Si tu cuenta ya está verificada, abrí la app e iniciá sesión normalmente.
+        </p>
+      </section>
+
+      <!-- Estado: sin parámetros (acceso directo a la URL) -->
+      <section class="state hidden" id="state-idle" aria-live="polite">
+        <div class="icon-wrap icon-lock">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="8" x2="12" y2="12"/>
+            <line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+        </div>
+        <h1 class="state-title">Verificación</h1>
+        <p class="state-subtitle">
+          Esta página se activa automáticamente al hacer clic en el enlace
+          de verificación de tu correo.<br/><br/>
+          Si no recibiste el correo, revisá tu bandeja de spam.
+        </p>
+      </section>
+
+    </div>
+  </main>
+
+  <script>
+    // ── Partículas (copiadas de app.js de reset-password, sin dependencia) ──
+    (function initParticles() {
+      const canvas = document.getElementById('particleCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      let W, H, particles;
+
+      function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+
+      function makeParticle() {
+        return {
+          x: Math.random() * W, y: Math.random() * H,
+          vx: (Math.random() - 0.5) * 0.3,
+          vy: -Math.random() * 0.4 - 0.1,
+          r: Math.random() * 1.5 + 0.4,
+          alpha: Math.random() * 0.4 + 0.05,
+          hue: Math.random() < 0.5 ? 248 : 180,
+        };
+      }
+
+      function init() {
+        resize();
+        const count = Math.min(Math.floor((W * H) / 12000), 120);
+        particles = Array.from({ length: count }, makeParticle);
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, W, H);
+        for (const p of particles) {
+          p.x += p.vx; p.y += p.vy;
+          if (p.y < -5) { p.y = H + 5; p.x = Math.random() * W; }
+          if (p.x < -5) p.x = W + 5;
+          if (p.x > W + 5) p.x = -5;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.fillStyle = `hsla(${p.hue},80%,70%,${p.alpha})`;
+          ctx.fill();
+        }
+        for (let i = 0; i < particles.length; i++) {
+          for (let j = i + 1; j < particles.length; j++) {
+            const dx = particles[i].x - particles[j].x;
+            const dy = particles[i].y - particles[j].y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < 100) {
+              ctx.beginPath();
+              ctx.moveTo(particles[i].x, particles[i].y);
+              ctx.lineTo(particles[j].x, particles[j].y);
+              ctx.strokeStyle = `rgba(108,99,255,${0.06 * (1 - dist / 100)})`;
+              ctx.lineWidth = 0.6;
+              ctx.stroke();
+            }
+          }
+        }
+        requestAnimationFrame(draw);
+      }
+
+      window.addEventListener('resize', init);
+      init();
+      draw();
+    })();
+
+    // ── Leer parámetro y mostrar estado correcto ──────────────
+    (function render() {
+      const params   = new URLSearchParams(window.location.search);
+      const verified = params.get('verified') === '1';
+      const errored  = params.get('verify_error') === '1';
+
+      const stateId = verified ? 'state-success'
+                    : errored  ? 'state-invalid'
+                    :            'state-idle';
+
+      document.getElementById(stateId).classList.remove('hidden');
+    })();
+  </script>
+</body>
+</html>
