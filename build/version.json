@@ -1,5 +1,5 @@
 {
-  "version": "1.0.4",
+  "version": "1.0.5",
   "titulo": "Nueva actualización disponible",
   "website": "https://fastxstudios.github.io/KxSoftware-LadingPage/",
   "downloadUrl": "https://github.com/FastXStudios/KxBuilds/releases/download/v1.0.4/KxSetup.exe",
@@ -13,6 +13,11 @@
       "id": 2,
       "titulo": "Fix conexión ADB",
       "descripcion": "Corrección en la detección de dispositivos USB."
+    },
+    {
+      "id": 3,
+      "titulo": "Reducción de Delay",
+      "descripcion": "Corrección en los algoritmos de procesamientos de imagen"
     }
   ]
 }
