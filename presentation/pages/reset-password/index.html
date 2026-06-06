@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+  <meta http-equiv="X-Frame-Options" content="DENY" />
+  <meta name="referrer" content="no-referrer" />
+  <title>Restablecer contraseña · Kx</title>
+  <link rel="icon" type="image/png" href="favicon.png" />
+  <link rel="apple-touch-icon" href="favicon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Fondo animado -->
+  <div class="bg-canvas" aria-hidden="true">
+    <canvas id="particleCanvas"></canvas>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="grid-lines"></div>
+  </div>
+
+  <!-- Contenedor principal -->
+  <main class="main-wrapper">
+    <div class="card" id="card" role="main">
+
+      <!-- Logo -->
+      <div class="logo-area" aria-label="Kx Software">
+        <img src="favicon.png" alt="Kx" class="logo-mark" />
+        <div class="logo-text-group">
+          <span class="logo-text">Kx <span class="logo-software">Software</span></span>
+          <span class="logo-tagline">Recuperación de contraseña</span>
+        </div>
+
+      </div>
+
+      <!-- Estado: cargando token -->
+      <section class="state" id="state-loading" aria-live="polite">
+        <div class="spinner-wrap">
+          <div class="spinner"></div>
+        </div>
+        <p class="state-subtitle">Verificando enlace...</p>
+      </section>
+
+      <!-- Estado: token inválido / expirado -->
+      <section class="state hidden" id="state-invalid" aria-live="polite">
+        <div class="icon-wrap icon-error">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="15" y1="9" x2="9" y2="15"/>
+            <line x1="9" y1="9" x2="15" y2="15"/>
+          </svg>
+        </div>
+        <h1 class="state-title">Enlace no válido</h1>
+        <p class="state-subtitle" id="invalid-message">Este enlace de recuperación ha expirado o ya fue utilizado. Abre la app y solicita uno nuevo.</p>
+      </section>
+
+      <!-- Estado: formulario activo -->
+      <section class="state hidden" id="state-form" aria-live="polite">
+        <div class="icon-wrap icon-lock">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+        </div>
+        <h1 class="state-title">Nueva contraseña</h1>
+        <p class="state-subtitle">Elige una contraseña segura para tu cuenta.</p>
+
+        <div class="form-body" id="form-body">
+
+          <div class="field-group">
+            <label for="password" class="field-label">Contraseña nueva</label>
+            <div class="field-wrap">
+              <input
+                type="password"
+                id="password"
+                class="field-input"
+                placeholder="Mínimo 8 caracteres"
+                autocomplete="new-password"
+                maxlength="128"
+                aria-describedby="password-strength-desc"
+              />
+              <button type="button" class="toggle-vis" id="togglePass" aria-label="Mostrar contraseña">
+                <svg class="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                  <circle cx="12" cy="12" r="3"/>
+                </svg>
+                <svg class="eye-off-icon hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                  <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
+                  <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
+                  <line x1="1" y1="1" x2="23" y2="23"/>
+                </svg>
+              </button>
+            </div>
+            <!-- Barra de fortaleza -->
+            <div class="strength-bar" aria-hidden="true">
+              <span class="strength-segment" id="seg1"></span>
+              <span class="strength-segment" id="seg2"></span>
+              <span class="strength-segment" id="seg3"></span>
+              <span class="strength-segment" id="seg4"></span>
+            </div>
+            <p class="strength-label" id="password-strength-desc" aria-live="polite"></p>
+          </div>
+
+          <div class="field-group">
+            <label for="confirm" class="field-label">Confirmar contraseña</label>
+            <div class="field-wrap">
+              <input
+                type="password"
+                id="confirm"
+                class="field-input"
+                placeholder="Repite tu contraseña"
+                autocomplete="new-password"
+                maxlength="128"
+              />
+              <button type="button" class="toggle-vis" id="toggleConfirm" aria-label="Mostrar confirmación">
+                <svg class="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                  <circle cx="12" cy="12" r="3"/>
+                </svg>
+                <svg class="eye-off-icon hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                  <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
+                  <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
+                  <line x1="1" y1="1" x2="23" y2="23"/>
+                </svg>
+              </button>
+            </div>
+            <p class="field-error hidden" id="match-error" role="alert">Las contraseñas no coinciden.</p>
+          </div>
+
+          <!-- Lista de requisitos -->
+          <ul class="req-list" id="req-list" aria-label="Requisitos de contraseña">
+            <li class="req-item" id="req-len" data-rule="len">
+              <svg class="req-icon" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.4"/></svg>
+              Mínimo 8 caracteres
+            </li>
+            <li class="req-item" id="req-upper" data-rule="upper">
+              <svg class="req-icon" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.4"/></svg>
+              Una letra mayúscula
+            </li>
+            <li class="req-item" id="req-lower" data-rule="lower">
+              <svg class="req-icon" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.4"/></svg>
+              Una letra minúscula
+            </li>
+            <li class="req-item" id="req-num" data-rule="num">
+              <svg class="req-icon" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.4"/></svg>
+              Un número
+            </li>
+            <li class="req-item" id="req-special" data-rule="special">
+              <svg class="req-icon" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.4"/></svg>
+              Un carácter especial (!@#$%^&*)
+            </li>
+          </ul>
+
+          <p class="api-error hidden" id="api-error" role="alert"></p>
+
+          <button class="btn btn-primary" id="submit-btn" disabled>
+            <span class="btn-label">Restablecer contraseña</span>
+            <span class="btn-spinner hidden"></span>
+          </button>
+        </div>
+      </section>
+
+      <!-- Estado: éxito -->
+      <section class="state hidden" id="state-success" aria-live="polite">
+        <div class="icon-wrap icon-success">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+            <path class="check-path" d="M5 13l4 4L19 7"/>
+            <circle class="check-circle" cx="12" cy="12" r="10"/>
+          </svg>
+        </div>
+        <h1 class="state-title">Contraseña actualizada</h1>
+        <p class="state-subtitle">Tu contraseña ha sido restablecida correctamente. Ya puedes abrir la app e iniciar sesión.</p>
+      </section>
+
+    </div>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
