@@ -1,0 +1,17 @@
+{
+  "version": "1.0.2",
+  "titulo": "Nueva actualización disponible",
+  "website": "https://fastxstudios.github.io/KxSoftware-LadingPage/",
+  "cambios": [
+    {
+      "id": 1,
+      "titulo": "Mejoras de rendimiento",
+      "descripcion": "Se optimizó el uso de CPU y RAM."
+    },
+    {
+      "id": 2,
+      "titulo": "Fix conexión ADB",
+      "descripcion": "Corrección en la detección de dispositivos USB."
+    }
+  ]
+}
