@@ -1,8 +1,8 @@
 {
-  "version": "1.0.7",
+  "version": "1.0.9",
   "titulo": "Nueva actualización disponible",
   "website": "https://fastxstudios.github.io/KxSoftware-LadingPage/",
-  "downloadUrl": "https://github.com/FastXStudios/KxBuilds/releases/download/v1.0.7/KxSetup.exe",
+  "downloadUrl": "https://github.com/FastXStudios/KxBuilds/releases/download/v1.0.9/KxSetup.exe",
   "cambios": [
     {
       "id": 1,
